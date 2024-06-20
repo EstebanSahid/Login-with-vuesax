@@ -1,24 +1,44 @@
 <template>
-  <div class="login-container">
-    <vs-card class="login-card">
+  <div class="container">
+    <vs-card>
+      <!-- Imagen de Login -->
+      <vs-row vs-justify="center" vs-align="center">
+        <vs-col vs-w="4" vs-type="flex" vs-justify="center" vs-align="center" >
+          <img src="/img-login/login.png" alt="Imagen de Login">
+        </vs-col>
+      </vs-row>
+      
+      <!-- Formulario -->
       <form>
-        <vs-input 
-          v-model="username" 
-          label-placeholder="Usuario" 
-          class="input-login" />
-        <vs-input 
-          v-model="password" 
-          label-placeholder="Contraseña" 
-          type="password" 
-          class="input-login" />
-        <vs-button type="filled" class="login-button" @click="validarVacios">Login</vs-button>
+        <vs-row vs-w="12">
+          <vs-col vs-w="4" vs-offset="4" >
+            <!-- Input para el Usuario -->
+            <vs-row vs-justify="center" vs-align="center">
+              <vs-col vs-w="6" vs-type="flex" vs-justify="center" vs-align="center">
+                <vs-input v-model="username" label-placeholder="Ingrese el usuario" />
+              </vs-col>
+              <!-- Input para la Contraseña -->
+              <vs-col vs-w="6" vs-type="flex" vs-justify="center" vs-align="center">
+                <vs-input v-model="password" label-placeholder="Ingrese la contraseña" type="password" />
+              </vs-col>
+            </vs-row>
+            
+            <!-- Enviar el Formulario -->
+            <vs-row vs-justify="center" vs-align="center">
+              <vs-col vs-w="12" vs-type="flex" vs-justify="center" vs-align="center" >
+                <vs-button type="filled" class="login-button" @click="validarVacios">
+                  Login
+                </vs-button>
+              </vs-col>
+            </vs-row>
+          </vs-col>
+        </vs-row>
       </form>
     </vs-card>
   </div>
 </template>
   
 <script>
-  // Importamos axios para consumir los EndPoints
   import axios from 'axios'
 
   export default {
@@ -41,52 +61,53 @@
         }
       },
 
+      asignarLocalStorage(data) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.id);
+        localStorage.setItem('forzar', data.forzar);
+      },
+
       async enviarLogin() {
         try {
           const response = await axios.post('https://perfectosri.software-total.com/api/v1/login/', {
             username: this.username,
             password: this.password
-          })
-          console.log('Response:', response.data)
+          });
+
+          console.log('Response:', response.data);
+          this.asignarLocalStorage(response.data);
+
         } catch (error) {
           this.$vs.notify({
-            title: "Hubo un error al Iniciar Sesión",
+            title: "Error al Iniciar Sesión",
             text: error.response.data.message + ', Código: ' + error.response.status + '. Por favor comuniquese con el Administrador',
             color: "danger"
           });
-          /*
+          
           console.error('Error Response:', error.response.data);
           console.error('Error Status:', error.response.status);
           console.error('Error Headers:', error.response.headers);
-          */
+          
         }
       }
-
     }
   }
   </script>
   
   <style scoped>
-  /*
-  .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f5f5f5;
-  }
-  
-  .login-card {
-    padding: 2rem;
-  }
-  
-  .input-login {
-    margin-bottom: 1rem;
-  }
-  
-  .login-button {
-    width: 100%;
-  }
-  */
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-image: url('./../../public/img-login/background-login.jpg');
+      background-size: cover;
+      background-position: center; 
+    }
+    
+    .login-button {
+      margin-top: 15px;
+      width: 100%; 
+    }
   </style>
   
